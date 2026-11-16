@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Water Potability Dataset</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        background: #f4f7fb;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+      }
+      .panel {
+        background: #fff;
+        border: 1px solid #dfeaf6;
+        border-radius: 18px;
+        box-shadow: 0 8px 20px rgba(27, 79, 145, 0.06);
+      }
+      .hero {
+        background: linear-gradient(135deg, #0b5ed7, #1d72d8);
+        color: white;
+        border-radius: 18px;
+        padding: 28px 22px;
+        text-align: center;
+      }
+      .summary-box {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #dfeaf6;
+        text-align: center;
+        padding: 18px 12px;
+        height: 100%;
+      }
+      .summary-box h6 {
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 12px;
+      }
+      .summary-box .value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #0d6efd;
+      }
+      .info-card {
+        background: #fff;
+        border: 1px solid #dfeaf6;
+        border-radius: 18px;
+        padding: 20px;
+        height: 100%;
+      }
+      .table thead th {
+        background: #0d6efd;
+        color: #fff;
+      }
+      .status-badge {
+        display: inline-block;
+        background: #e8f4ff;
+        color: #0d6efd;
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .process-step {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #eef7ff;
+        color: #0d6efd;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-weight: 600;
+        margin: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container py-4">
+      <div class="hero mb-4">
+        <h1 class="fw-bold mb-2">Water Potability Dataset</h1>
+        <p class="mb-0">Artificial Neural Network & Model Comparison</p>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-3">
+          <div class="summary-box">
+            <h6>Samples</h6>
+            <div class="value">{{ dashboard.rows }}</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="summary-box">
+            <h6>Features</h6>
+            <div class="value">{{ dashboard.features }}</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="summary-box">
+            <h6>Train</h6>
+            <div class="value">{{ dashboard.train_rows }}</div>
+            <small class="text-muted">70%</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="summary-box">
+            <h6>Test</h6>
+            <div class="value">{{ dashboard.test_rows }}</div>
+            <small class="text-muted">30%</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+          <div class="info-card">
+            <h4 class="fw-bold mb-3">Dataset Overview</h4>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item d-flex justify-content-between px-0">
+                <span>Features</span>
+                <strong>{{ dashboard.features }}</strong>
+              </li>
+              <li class="list-group-item d-flex justify-content-between px-0">
+                <span>Target</span>
+                <strong>{{ dashboard.target }}</strong>
+              </li>
+              <li class="list-group-item d-flex justify-content-between px-0">
+                <span>Train / Test</span>
+                <strong>70% / 30%</strong>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="info-card">
+            <h4 class="fw-bold mb-3">Class Distribution</h4>
+            <div class="table-responsive">
+              <table class="table table-bordered align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Class</th>
+                    <th>Label</th>
+                    <th>Count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for key, value in dashboard.class_distribution.items() %}
+                  <tr>
+                    <td>
+                      {% if key == 0.0 %}
+                        0
+                      {% elif key == 1.0 %}
+                        1
+                      {% else %}
+                        {{ key }}
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if key == 0.0 %}
+                        Not Potable
+                      {% elif key == 1.0 %}
+                        Potable
+                      {% else %}
+                        {{ key }}
+                      {% endif %}
+                    </td>
+                    <td>{{ value }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel mb-4 p-4">
+        <h4 class="fw-bold mb-3">Dataset Description</h4>
+        <p class="mb-3 text-muted">
+          Water Potability Dataset เป็นชุดข้อมูลคุณภาพน้ำที่ใช้คุณสมบัติทางกายภาพและเคมีของน้ำจำนวน 9 Features เพื่อจำแนกว่าน้ำตัวอย่างอยู่ในกลุ่ม Potable หรือ Not Potable
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+          {% for col in dashboard.columns_list %}
+          <span class="badge bg-light text-dark border rounded-pill px-2 py-2">{{ col }}</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="panel mb-4 p-4">
+        <h4 class="fw-bold mb-3">Model Performance Comparison</h4>
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Accuracy</th>
+                <th>Precision</th>
+                <th>Recall</th>
+                <th>F Measure</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in dashboard.results %}
+              <tr>
+                <td>{{ row["Method"] }}</td>
+                <td>{{ "%.2f"|format(row["Accuracy"]) }}%</td>
+                <td>{{ "%.2f"|format(row["Precision"]) }}%</td>
+                <td>{{ "%.2f"|format(row["Recall"]) }}%</td>
+                <td>{{ "%.2f"|format(row["F Measure"]) }}%</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
