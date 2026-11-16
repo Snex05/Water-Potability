@@ -88,6 +88,7 @@ def evaluate_models():
 
     # เก็บผลลัพธ์แบบ dictionary เพื่อส่งไปหน้าเว็บ
     results = []
+    trained_models = {}
 
     # รายการโมเดลที่ต้องเปรียบเทียบ
     model_defs = [
@@ -110,6 +111,7 @@ def evaluate_models():
     # ========================================================
     for model_name, model in model_defs:
         model.fit(X_train_scaled, y_train)
+        trained_models[model_name] = model
         y_pred = model.predict(X_test_scaled)
 
         accuracy = accuracy_score(y_test, y_pred)
@@ -129,6 +131,7 @@ def evaluate_models():
 
     # เรียงผลลัพธ์จาก Accuracy มากไปน้อย เพื่อให้เห็นโมเดลที่ดีที่สุดก่อน
     result_df = pd.DataFrame(results).sort_values("Accuracy", ascending=False)
+    best_model_name = str(result_df.iloc[0]["Method"])
 
     # ========================================================
     # 8. Flow steps สำหรับแสดงในหน้าเว็บ
@@ -160,6 +163,9 @@ def evaluate_models():
         "test_rows": X_test.shape[0],
         "missing_values": data.isnull().sum().to_dict(),
         "results": result_df.to_dict(orient="records"),
+        "best_model_name": best_model_name,
+        "_best_model": trained_models[best_model_name],
+        "_scaler": scaler,
         "class_distribution": y.value_counts().sort_index().to_dict(),
         "steps": flow_steps,
     }
